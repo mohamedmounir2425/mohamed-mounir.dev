@@ -1,12 +1,13 @@
+import { useEffect, useState } from "react";
+import { FaRocket, FaCloudDownloadAlt, FaCode } from "react-icons/fa";
+import Prism from "prismjs";
 import AboutMeScroll from "@/components/ui/AboutMeScroll";
 import { FlipWords } from "@/components/ui/flip-words";
 import GridBackground from "@/components/ui/GridBackground";
 import Meteors from "@/components/ui/meteors";
 import SparklesText from "@/components/ui/SparklesText";
-import { useState } from "react";
-import { FaRocket, FaCloudDownloadAlt } from "react-icons/fa";
-import { FaCloudArrowDown } from "react-icons/fa6";
-
+import "prismjs/components/prism-javascript";
+import "@/assets/css/tomorrow.css";
 export default function Hero() {
     const words = [
         "Frontend Developer (React & Angular)",
@@ -21,7 +22,7 @@ export default function Hero() {
     const [code] = useState(`
         const profile = {
             name: 'Mohamed Mounir',
-            title: 'Frontend developer | Problem Solver',
+            title: 'Frontend developer | Problem Solver | Passionate Learner',
             skills: [
                 'React', 'NextJS', 'Redux', 'Angular', 'Node',
                 'Express','MySQL', 'MongoDB', 'Docker',
@@ -30,18 +31,39 @@ export default function Hero() {
             hardWorker: true,
             quickLearner: true,
             problemSolver: true,
-            yearsOfExperience: 4, 
+            yearsOfExperience: 2, 
             hireable: function() {
                 return (
                     this.hardWorker &&
                     this.problemSolver &&
                     this.skills.length >= 5 &&
-                    this.yearsOfExperience >= 3
+                    this.yearsOfExperience >= 2
                 );
             }
         };
           `);
+    useEffect(() => {
+        Prism.highlightAll();
 
+        // Add CSS animation for grid and dots
+        const style = document.createElement("style");
+        style.textContent = `
+          @keyframes gridPulse {
+            0%, 100% { opacity: 0.1; }
+            50% { opacity: 0.3; }
+          }
+          
+          @keyframes dotPulse {
+            0%, 100% { opacity: 0.2; transform: scale(0.8); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+          }
+        `;
+        document.head.appendChild(style);
+
+        return () => {
+            document.head.removeChild(style);
+        };
+    }, [code]);
     return (
         <main className="min-h-screen bg-[#020617] text-white pt-20 lg:pt-0">
             <section className="relative min-h-screen flex items-center px-4 sm:px-6 lg:px-8">
@@ -128,7 +150,26 @@ export default function Hero() {
                         </div>
                     </div>
                     {/* Right column - Code window */}
-                    <div className="w-full lg:w-1/2 "></div>
+                    <div className="w-full lg:w-1/2  animate__animated animate__fadeInDown animate__delay-0.1s">
+                        <div className="gradient-border ">
+                            <div className="code-window bg-[#091121]">
+                                <div className="window-header">
+                                    <div className="window-dot bg-red-500"></div>
+                                    <div className="window-dot bg-yellow-500"></div>
+                                    <div className="window-dot bg-green-500"></div>
+                                    <span className="ml-2 text-sm text-gray-400 flex items-center gap-2">
+                                        <FaCode />
+                                        developer.js
+                                    </span>
+                                </div>
+                                <pre className="language-javascript">
+                                    <code className="language-javascript">
+                                        {code}
+                                    </code>
+                                </pre>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
             <AboutMeScroll />
