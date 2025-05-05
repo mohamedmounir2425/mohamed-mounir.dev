@@ -8,6 +8,7 @@ import Meteors from "@/components/ui/meteors";
 import SparklesText from "@/components/ui/SparklesText";
 import "prismjs/components/prism-javascript";
 import "@/assets/css/tomorrow.css";
+import About from "@/components/ui/About";
 export default function Hero() {
     const words = [
         "Frontend Developer (React & Angular)",
@@ -173,6 +174,7 @@ export default function Hero() {
                 </div>
             </section>
             <AboutMeScroll />
+            <About />
         </main>
     );
 }
