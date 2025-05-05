@@ -12,7 +12,7 @@ export default function About() {
                         Developer, Designer, Creator, Innovator
                     </h2>
                     <div className="grid gap-6 sm:grid-cols-2 md:gap-12 lg:gap-24">
-                        <div className="relative mb-6 sm:mb-0">
+                        <div className="relative col-span-2 md:col-span-1 mb-6 sm:mb-0">
                             <div className="bg-linear-to-b aspect-76/59 relative rounded-2xl p-px from-zinc-300 to-transparent">
                                 <img
                                     src={HeroImg}
@@ -24,7 +24,7 @@ export default function About() {
                             </div>
                         </div>
 
-                        <div className="relative space-y-4">
+                        <div className="relative col-span-2 md:col-span-1 space-y-4">
                             <p className="text-white">
                                 Hello! I'm Mohamed Mounir, a dedicated
                                 JavaScript developer with a strong focus on
