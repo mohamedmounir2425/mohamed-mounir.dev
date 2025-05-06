@@ -4,6 +4,7 @@ import Hero from "./pages/Hero/Hero";
 import SkillsSection from "./pages/Skills/Skills";
 import ExperienceSection from "./pages/Experience/Experience";
 import EducationSection from "./pages/Education/Education";
+import Contact from "./pages/Contact/Contact";
 export default function App() {
     return (
         <>
@@ -12,6 +13,7 @@ export default function App() {
             <SkillsSection />
             <ExperienceSection />
             <EducationSection />
+            <Contact />
         </>
     );
 }
