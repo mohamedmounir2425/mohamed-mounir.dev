@@ -13,7 +13,7 @@ import {
     LocateIcon,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { FaLocationArrow } from "react-icons/fa";
+import { FaGraduationCap, FaLocationArrow } from "react-icons/fa";
 import { MdLocationPin } from "react-icons/md";
 
 const EducationSection = () => {
@@ -152,7 +152,8 @@ const EducationSection = () => {
                                         </p>
                                     </div>
                                     <p className="text-lg text-gray-300 flex items-center gap-2">
-                                        <Monitor className="w-5 h-5 text-teal-500" />
+                                        {/* <Monitor className="w-5 h-5 text-teal-500" /> */}
+                                        <FaGraduationCap className="w-5 h-5 text-teal-500" />
                                         {edu.school}
                                     </p>
                                 </div>
