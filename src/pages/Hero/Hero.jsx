@@ -4,7 +4,7 @@ import Prism from "prismjs";
 import AboutMeScroll from "@/components/ui/AboutMeScroll";
 import { FlipWords } from "@/components/ui/flip-words";
 import GridBackground from "@/components/ui/GridBackground";
-import Meteors from "@/components/ui/meteors";
+import Meteors from "@/components/ui/Meteors";
 import SparklesText from "@/components/ui/SparklesText";
 import { viewResume } from "@/lib/resumeDownload";
 import "prismjs/components/prism-javascript";
