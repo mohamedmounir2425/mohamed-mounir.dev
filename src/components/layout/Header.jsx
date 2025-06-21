@@ -20,6 +20,52 @@ export default function Header({
 }) {
     const [activeLink, setActiveLink] = useState("home");
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [showGuideModal, setShowGuideModal] = useState(false);
+
+    // Check if user has chosen not to show the guide again
+    const shouldShowGuide = () => {
+        return localStorage.getItem("portfolio-guide-disabled") !== "true";
+    };
+
+    // Handle keyboard navigation for single page view
+    useEffect(() => {
+        if (viewMode !== "single") return;
+
+        const handleKeyDown = (event) => {
+            if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+                event.preventDefault();
+                navigateToPreviousSection();
+            } else if (
+                event.key === "ArrowRight" ||
+                event.key === "ArrowDown"
+            ) {
+                event.preventDefault();
+                navigateToNextSection();
+            }
+        };
+
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [viewMode, activeLink]);
+
+    const navigateToNextSection = () => {
+        const currentIndex = navLinks.findIndex(
+            (link) => link.id === activeLink
+        );
+        const nextIndex = (currentIndex + 1) % navLinks.length;
+        const nextSection = navLinks[nextIndex].id;
+        handleNavigation(nextSection);
+    };
+
+    const navigateToPreviousSection = () => {
+        const currentIndex = navLinks.findIndex(
+            (link) => link.id === activeLink
+        );
+        const prevIndex =
+            currentIndex === 0 ? navLinks.length - 1 : currentIndex - 1;
+        const prevSection = navLinks[prevIndex].id;
+        handleNavigation(prevSection);
+    };
 
     // Handle scroll to update active link (only in scroll mode)
     useEffect(() => {
@@ -77,6 +123,20 @@ export default function Header({
         if (newMode === "single") {
             window.scrollTo({ top: 0, behavior: "smooth" });
         }
+
+        // Show guide modal only if user hasn't disabled it
+        if (shouldShowGuide()) {
+            setShowGuideModal(true);
+        }
+    };
+
+    const closeGuideModal = () => {
+        setShowGuideModal(false);
+    };
+
+    const disableGuideModal = () => {
+        localStorage.setItem("portfolio-guide-disabled", "true");
+        setShowGuideModal(false);
     };
 
     const navLinks = [
@@ -293,6 +353,221 @@ export default function Header({
             background-size: 200% 200%;
           }
         `}</style>
+
+            {/* Guide Modal */}
+            {showGuideModal && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+                    <div className="bg-gray-900/95 backdrop-blur-md rounded-2xl border border-gray-700 max-w-md w-full p-6 relative">
+                        {/* Close button */}
+                        <button
+                            onClick={closeGuideModal}
+                            className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+                        >
+                            <svg
+                                className="w-6 h-6"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M6 18L18 6M6 6l12 12"
+                                />
+                            </svg>
+                        </button>
+
+                        {/* Guide Content */}
+                        <div className="text-center">
+                            {/* Animated Icon */}
+                            <div className="mb-6 flex justify-center">
+                                {viewMode === "scroll" ? (
+                                    <div className="relative">
+                                        {/* Scroll icon with animated cursor */}
+                                        <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center animate-pulse">
+                                            <FaList className="text-white text-2xl" />
+                                        </div>
+                                        {/* Animated cursor */}
+                                        <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full animate-bounce">
+                                            <svg
+                                                className="w-4 h-4 mx-auto mt-1"
+                                                fill="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path d="M7 2l3 2h13a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-3l-3 3v-3H7a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="relative">
+                                        {/* Single page icon with animated hand */}
+                                        <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center animate-pulse">
+                                            <FaThLarge className="text-white text-2xl" />
+                                        </div>
+                                        {/* Animated hand pointing */}
+                                        <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-400 rounded-full animate-bounce">
+                                            <svg
+                                                className="w-4 h-4 mx-auto mt-1"
+                                                fill="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path d="M7 2l3 2h13a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-3l-3 3v-3H7a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Title */}
+                            <h3 className="text-xl font-bold text-white mb-4">
+                                {viewMode === "scroll"
+                                    ? "Scroll View Activated!"
+                                    : "Single Page View Activated!"}
+                            </h3>
+
+                            {/* Step-by-step guide */}
+                            <div className="space-y-4 text-left">
+                                {viewMode === "scroll" ? (
+                                    <>
+                                        <div className="flex items-start gap-3">
+                                            <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                                <span className="text-white text-sm font-bold">
+                                                    1
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <p className="text-white font-medium">
+                                                    Scroll through all sections
+                                                </p>
+                                                <p className="text-gray-400 text-sm">
+                                                    Use your mouse wheel or
+                                                    scroll bar to navigate
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-start gap-3">
+                                            <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                                <span className="text-white text-sm font-bold">
+                                                    2
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <p className="text-white font-medium">
+                                                    Use navigation menu
+                                                </p>
+                                                <p className="text-gray-400 text-sm">
+                                                    Click any section in the
+                                                    header to jump directly
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-start gap-3">
+                                            <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                                <span className="text-white text-sm font-bold">
+                                                    3
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <p className="text-white font-medium">
+                                                    Continuous experience
+                                                </p>
+                                                <p className="text-gray-400 text-sm">
+                                                    All sections flow seamlessly
+                                                    together
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <div className="flex items-start gap-3">
+                                            <div className="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                                <span className="text-white text-sm font-bold">
+                                                    1
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <p className="text-white font-medium">
+                                                    Focus on one section
+                                                </p>
+                                                <p className="text-gray-400 text-sm">
+                                                    View content without
+                                                    distractions
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-start gap-3">
+                                            <div className="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                                <span className="text-white text-sm font-bold">
+                                                    2
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <p className="text-white font-medium">
+                                                    Use navigation buttons
+                                                </p>
+                                                <p className="text-gray-400 text-sm">
+                                                    Click arrows or section
+                                                    names to switch
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-start gap-3">
+                                            <div className="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                                <span className="text-white text-sm font-bold">
+                                                    3
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <p className="text-white font-medium">
+                                                    Keyboard shortcuts
+                                                </p>
+                                                <p className="text-gray-400 text-sm">
+                                                    Use ← → arrow keys to
+                                                    navigate between sections
+                                                </p>
+                                            </div>
+                                        </div>
+                                        {/* <div className="flex items-start gap-3">
+                                            <div className="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                                <span className="text-white text-sm font-bold">
+                                                    4
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <p className="text-white font-medium">
+                                                    Circular navigation
+                                                </p>
+                                                <p className="text-gray-400 text-sm">
+                                                    Go from last to first
+                                                    section seamlessly
+                                                </p>
+                                            </div>
+                                        </div> */}
+                                    </>
+                                )}
+                            </div>
+
+                            {/* Action buttons */}
+                            <div className="mt-8 flex gap-3">
+                                <button
+                                    onClick={closeGuideModal}
+                                    className="flex-1 bg-gradient-to-r from-blue-500 to-cyan-500 text-white py-3 px-6 rounded-lg font-medium hover:from-blue-600 hover:to-cyan-600 transition-all duration-300"
+                                >
+                                    Got it!
+                                </button>
+                                <button
+                                    onClick={disableGuideModal}
+                                    className="px-4 py-3 text-gray-400 hover:text-white transition-colors"
+                                >
+                                    Don&apos;t show again
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </header>
     );
 }
