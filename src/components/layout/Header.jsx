@@ -10,6 +10,7 @@ import {
     FaThLarge,
     FaList,
 } from "react-icons/fa";
+import * as Tooltip from "@radix-ui/react-tooltip";
 
 export default function Header({
     refs,
@@ -19,7 +20,6 @@ export default function Header({
 }) {
     const [activeLink, setActiveLink] = useState("home");
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [showTooltip, setShowTooltip] = useState(false);
 
     // Handle scroll to update active link (only in scroll mode)
     useEffect(() => {
@@ -79,29 +79,6 @@ export default function Header({
         }
     };
 
-    const handleTooltipShow = () => {
-        setShowTooltip(true);
-    };
-
-    const handleTooltipHide = () => {
-        setShowTooltip(false);
-    };
-
-    const getTooltipContent = () => {
-        if (viewMode === "scroll") {
-            return {
-                title: "Switch to Single Page View",
-                description:
-                    "View one section at a time for a focused experience",
-            };
-        } else {
-            return {
-                title: "Switch to Scroll View",
-                description: "Scroll through all sections continuously",
-            };
-        }
-    };
-
     const navLinks = [
         { id: "home", icon: FaHome, text: "Home" },
         { id: "skills", icon: FaCode, text: "Skills" },
@@ -120,51 +97,65 @@ export default function Header({
                         <div className="flex justify-between items-center md:hidden px-2">
                             <button
                                 onClick={() => handleNavigation("home")}
-                                className="text-white font-bold"
+                                className="relative group flex-shrink-0 px-3 py-2 rounded-lg transition-all duration-300"
                             >
-                                Portfolio
-                            </button>
-                            <div className="flex items-center gap-2">
-                                {/* View Mode Toggle with Tooltip */}
-                                <div className="relative">
-                                    <button
-                                        onClick={toggleViewMode}
-                                        onMouseEnter={handleTooltipShow}
-                                        onMouseLeave={handleTooltipHide}
-                                        onTouchStart={handleTooltipShow}
-                                        onTouchEnd={handleTooltipHide}
-                                        className={`p-2.5 rounded-full transition-all duration-300 hover:scale-110
-                                            ${
-                                                viewMode === "scroll"
-                                                    ? "bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-300 border border-blue-500/30 hover:from-blue-500/30 hover:to-cyan-500/30"
-                                                    : "bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 border border-purple-500/30 hover:from-purple-500/30 hover:to-pink-500/30"
-                                            }
-                                            hover:shadow-lg
-                                        `}
-                                    >
-                                        {viewMode === "scroll" ? (
-                                            <FaList className="text-blue-400" />
-                                        ) : (
-                                            <FaThLarge className="text-purple-400" />
-                                        )}
-                                    </button>
-
-                                    {/* Mobile Tooltip */}
-                                    {showTooltip && (
-                                        <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-4 py-3 bg-gray-800 text-white text-sm rounded-lg shadow-xl z-50 min-w-[200px] max-w-[280px]">
-                                            <div className="font-semibold text-blue-300 mb-1">
-                                                {getTooltipContent().title}
-                                            </div>
-                                            <div className="text-gray-300 text-xs leading-relaxed">
-                                                {
-                                                    getTooltipContent()
-                                                        .description
-                                                }
-                                            </div>
-                                            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-800"></div>
-                                        </div>
-                                    )}
+                                <div className="flex items-center gap-1 text-reveal whitespace-nowrap">
+                                    {/* Animated gradient text */}
+                                    <span className="gradient-text-animated font-bold text-base">
+                                        Mohamed
+                                    </span>
+                                    <span className="text-white font-bold text-base">
+                                        Mounir
+                                    </span>
+                                    {/* Animated dot */}
+                                    <div className="w-1.5 h-1.5 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full animate-float"></div>
                                 </div>
+                                {/* Hover effect - line */}
+                                <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-cyan-400 transition-all duration-300 group-hover:w-full"></div>
+                            </button>
+                            <div className="flex items-center gap-1">
+                                {/* View Mode Toggle with Tooltip */}
+                                <Tooltip.Provider>
+                                    <Tooltip.Root>
+                                        <Tooltip.Trigger asChild>
+                                            <button
+                                                onClick={toggleViewMode}
+                                                className={`p-2 rounded-full transition-all duration-300 hover:scale-110
+                                                    ${
+                                                        viewMode === "scroll"
+                                                            ? "bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-300 border border-blue-500/30 hover:from-blue-500/30 hover:to-cyan-500/30"
+                                                            : "bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 border border-purple-500/30 hover:from-purple-500/30 hover:to-pink-500/30"
+                                                    }
+                                                    hover:shadow-lg
+                                                `}
+                                            >
+                                                {viewMode === "scroll" ? (
+                                                    <FaList className="text-blue-400 text-sm" />
+                                                ) : (
+                                                    <FaThLarge className="text-purple-400 text-sm" />
+                                                )}
+                                            </button>
+                                        </Tooltip.Trigger>
+                                        <Tooltip.Portal>
+                                            <Tooltip.Content
+                                                className="px-3 py-2 bg-gray-800 text-white text-xs rounded-lg shadow-xl z-50 min-w-[180px] max-w-[240px] data-[state=delayed-open]:data-[side=top]:animate-slideDownAndFade data-[state=delayed-open]:data-[side=right]:animate-slideLeftAndFade data-[state=delayed-open]:data-[side=left]:animate-slideRightAndFade data-[state=delayed-open]:data-[side=bottom]:animate-slideUpAndFade"
+                                                sideOffset={5}
+                                            >
+                                                <div className="font-semibold text-blue-300 mb-1">
+                                                    {viewMode === "scroll"
+                                                        ? "Switch to Single Page View"
+                                                        : "Switch to Scroll View"}
+                                                </div>
+                                                <div className="text-gray-300 text-xs leading-relaxed">
+                                                    {viewMode === "scroll"
+                                                        ? "View one section at a time for a focused experience"
+                                                        : "Scroll through all sections continuously"}
+                                                </div>
+                                                <Tooltip.Arrow className="fill-gray-800" />
+                                            </Tooltip.Content>
+                                        </Tooltip.Portal>
+                                    </Tooltip.Root>
+                                </Tooltip.Provider>
                                 <button
                                     onClick={() => setIsMenuOpen(!isMenuOpen)}
                                     className="text-white p-2"
@@ -180,58 +171,91 @@ export default function Header({
                                 isMenuOpen ? "block" : "hidden"
                             } md:block`}
                         >
-                            <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-1 lg:gap-2 py-4 md:py-0">
-                                {/* View Mode Toggle for Desktop */}
-                                <div className="hidden md:block relative">
+                            <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-1 lg:gap-2 py-4 md:py-0 md:max-w-none overflow-hidden">
+                                {/* Creative Desktop Logo */}
+                                <div className="hidden md:block">
                                     <button
-                                        onClick={toggleViewMode}
-                                        onMouseEnter={handleTooltipShow}
-                                        onMouseLeave={handleTooltipHide}
-                                        className={`px-4 py-2 md:py-1.5 rounded-full text-sm font-medium
-                                          transition-all duration-300 flex items-center gap-2
-                                          ${
-                                              viewMode === "scroll"
-                                                  ? "bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-300 border border-blue-500/30 hover:from-blue-500/30 hover:to-cyan-500/30"
-                                                  : "bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 border border-purple-500/30 hover:from-purple-500/30 hover:to-pink-500/30"
-                                          }
-                                          hover:scale-105 hover:shadow-lg
-                                        `}
+                                        onClick={() => handleNavigation("home")}
+                                        className="relative group px-2 lg:px-3 py-2 rounded-full transition-all duration-300"
                                     >
-                                        {viewMode === "scroll" ? (
-                                            <FaThLarge className="text-purple-400" />
-                                        ) : (
-                                            <FaList className="text-blue-400" />
-                                        )}
-                                        <span className="hidden lg:inline font-semibold">
-                                            {viewMode === "scroll"
-                                                ? "Single Page"
-                                                : "Scroll View"}
-                                        </span>
-                                    </button>
+                                        <div className="flex items-center gap-1 lg:gap-2 text-reveal whitespace-nowrap">
+                                            {/* Animated icon */}
+                                            <div className="relative z-10">
+                                                <div className="w-4 lg:w-5 h-4 lg:h-5 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full flex items-center justify-center animate-pulse">
+                                                    <span className="text-white text-xs font-bold">
+                                                        MM
+                                                    </span>
+                                                </div>
+                                            </div>
 
-                                    {/* Desktop Tooltip */}
-                                    {showTooltip && (
-                                        <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-4 py-3 bg-gray-800 text-white text-sm rounded-lg shadow-xl z-50 min-w-[220px] max-w-[300px]">
-                                            <div className="font-semibold text-blue-300 mb-1">
-                                                {getTooltipContent().title}
+                                            {/* Text with gradient */}
+                                            <div className="relative z-10">
+                                                <span className="gradient-text-animated font-bold text-xs lg:text-sm">
+                                                    Mohamed Mounir
+                                                </span>
+                                                <div className="text-gray-400 text-xs font-medium hidden xl:block">
+                                                    Frontend Developer
+                                                </div>
                                             </div>
-                                            <div className="text-gray-300 text-xs leading-relaxed">
-                                                {
-                                                    getTooltipContent()
-                                                        .description
-                                                }
-                                            </div>
-                                            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-800"></div>
                                         </div>
-                                    )}
+                                    </button>
                                 </div>
+
+                                {/* View Mode Toggle for Desktop */}
+                                <Tooltip.Provider>
+                                    <Tooltip.Root>
+                                        <Tooltip.Trigger asChild>
+                                            <button
+                                                onClick={toggleViewMode}
+                                                className={`px-2 lg:px-3 py-2 md:py-1.5 rounded-full text-xs lg:text-sm font-medium
+                                                  transition-all duration-300 flex items-center gap-1 lg:gap-2
+                                                  ${
+                                                      viewMode === "scroll"
+                                                          ? "bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-300 border border-blue-500/30 hover:from-blue-500/30 hover:to-cyan-500/30"
+                                                          : "bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 border border-purple-500/30 hover:from-purple-500/30 hover:to-pink-500/30"
+                                                  }
+                                                  hover:scale-105 hover:shadow-lg
+                                                `}
+                                            >
+                                                {viewMode === "scroll" ? (
+                                                    <FaThLarge className="text-purple-400 text-sm" />
+                                                ) : (
+                                                    <FaList className="text-blue-400 text-sm" />
+                                                )}
+                                                <span className="hidden 2xl:inline font-semibold whitespace-nowrap">
+                                                    {viewMode === "scroll"
+                                                        ? "Single Page"
+                                                        : "Scroll View"}
+                                                </span>
+                                            </button>
+                                        </Tooltip.Trigger>
+                                        <Tooltip.Portal>
+                                            <Tooltip.Content
+                                                className="px-4 py-3 bg-gray-800 text-white text-sm rounded-lg shadow-xl z-50 min-w-[220px] max-w-[300px] data-[state=delayed-open]:data-[side=top]:animate-slideDownAndFade data-[state=delayed-open]:data-[side=right]:animate-slideLeftAndFade data-[state=delayed-open]:data-[side=left]:animate-slideRightAndFade data-[state=delayed-open]:data-[side=bottom]:animate-slideUpAndFade"
+                                                sideOffset={5}
+                                            >
+                                                <div className="font-semibold text-blue-300 mb-1">
+                                                    {viewMode === "scroll"
+                                                        ? "Switch to Single Page View"
+                                                        : "Switch to Scroll View"}
+                                                </div>
+                                                <div className="text-gray-300 text-xs leading-relaxed">
+                                                    {viewMode === "scroll"
+                                                        ? "View one section at a time for a focused experience"
+                                                        : "Scroll through all sections continuously"}
+                                                </div>
+                                                <Tooltip.Arrow className="fill-gray-800" />
+                                            </Tooltip.Content>
+                                        </Tooltip.Portal>
+                                    </Tooltip.Root>
+                                </Tooltip.Provider>
 
                                 {navLinks.map(({ id, icon: Icon, text }) => (
                                     <button
                                         key={id}
                                         onClick={() => handleNavigation(id)}
-                                        className={`px-3 py-2 md:py-1.5 rounded-lg md:rounded-full text-sm font-medium
-                      transition-all duration-300 flex items-center gap-2
+                                        className={`px-2 lg:px-3 py-2 md:py-1.5 rounded-lg md:rounded-full text-xs lg:text-sm font-medium
+                      transition-all duration-300 flex items-center gap-1 lg:gap-2
                       hover:bg-white/10 
                       ${
                           activeLink === id
@@ -241,7 +265,7 @@ export default function Header({
                     `}
                                     >
                                         <Icon
-                                            className={`text-base ${
+                                            className={`text-sm lg:text-base ${
                                                 activeLink === id
                                                     ? "scale-110"
                                                     : ""
